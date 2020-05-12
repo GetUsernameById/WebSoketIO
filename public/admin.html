@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ap</title>
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+    <h1>Admin Page</h1>
+    <div class="container">
+        <div class="cashbox-items"></div> 
+        <button id="product-btn" onclick="getActiveCashboxCount()"> Active cashboxes </button>   
+    </div>
+
+
+    
+    
+
+
+<script src="js/socket.io.js"></script>
+<script src="js/store.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+    let adminID,
+        users = getUsers(),
+        user = initAdmin(),
+        socket;
+
+
+    getUsers();
+    
+    if(user){
+        console.log(user);
+        socket = io.connect('http://localhost:3001/admin',{
+            query:{data: JSON.stringify(user)}
+        });
+    }
+
+
+    socket.on('addNewProduct', (data) => {    
+        console.log(`Admin add new product`)
+    })
+    
+    socket.on('connect', (state) => {
+        console.log(`Admin ${socket.id} connected to Server`)
+    })
+
+    socket.on('getActiveCashbox', (data) => {
+        console.log(data);
+        data.forEach(element => {
+            $('.cashbox-items').append(`
+                <div class="cashbox" data->
+                    <div class="content">
+                        Касса ${element.id}/${element.storeID}/${element.organisationID}
+                    </div>
+                    <div class="emits">
+                        <button class='cb-btn product-btn'onclick="addNewProduct()"> New Product </button>
+                        <button class='cb-btn reload-btn'> Reload </button>
+                    </div>
+                </div>
+            `)
+        });
+    })
+  
+    socket.on('connectedNewCb', (data) => {
+        $('.cashbox-items').append(`
+            <div class='cashbox' data-socket='${data.socketID}'>
+                <div class="content">
+                    Касса ${data.id}/${data.storeID}/${data.organisationID}
+                </div>
+                <div class='emits'>
+                    <button class='cb-btn product-btn' onclick='addNewProduct()'> New Product </button>
+                    <button class='cb-btn reload-btn'> Reload </button>
+                </div>
+            </div>
+        `)
+    })
+   
+    socket.on('dissconectCb', (data) => {
+        console.log(data.socketID + ' Disconnected');
+        $('.cashbox-items').find(`.cashbox[data-socket='${data.socketID}']`).remove();
+    })
+    
+    
+    
+    $('.cashbox-items').on('click', '.cashbox .reload-btn', function(){
+        let sockedID = $(this).closest('.cashbox').attr('data-socket');
+        reloadCashbox(sockedID);
+        
+    })
+        
+    function addNewProduct(){
+        socket.emit('addNewProduct', {socketID: socket.id, type: 'addProduct', payload: '01010111'});
+    };
+
+    function reloadCashbox(sockedID){
+        console.log(sockedID);
+        
+        socket.emit('reloadCashbox', sockedID);
+    };
+
+    
+    function initAdmin(){
+        var _user, userSome = false;
+        
+        adminID = prompt('Админ id');
+        
+        
+        if(adminID){
+            userSome = users.some(user => {
+                if(user.id == adminID && user.role == 'admin'){
+                    _user = user;
+                }
+                return user.id == adminID && user.role == 'admin';
+            });
+        }
+
+        return _user
+    }
+</script>
+</body>
+</html>

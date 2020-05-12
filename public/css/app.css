@@ -1,0 +1,34 @@
+.container{
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+.cashbox-items{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 80px;
+}
+.cashbox{
+    flex: 1 0 100%;
+    max-width: 32%;
+    height: 300px;
+    border: 1px solid black;
+    padding: 25px;
+    box-sizing: border-box;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.cashbox .content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 250px;
+}
+
+.cashbox .emits{
+    display: flex;
+    justify-content: space-between;
+}

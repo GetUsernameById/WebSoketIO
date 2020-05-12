@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CB</title>
+</head>
+<body>
+    <h1>CASHBOX</h1>
+<script src="js/socket.io.js"></script>
+<script src="js/store.js"></script>
+<script>
+    let  users = getUsers(),
+         user = initCashBox(),
+         socket;
+
+    
+    
+    if(user){
+        console.log(user);
+        socket = io.connect('http://localhost:3001/cashbox',{
+            query:{data: JSON.stringify(user)}
+        });
+    }
+
+    socket.on('connect', () => {
+        console.log(`Cashbox ${socket.id} connected to Server`)
+    })
+    
+    socket.on('addNewProduct', (data) => {    
+        console.log(`Admin add new product`)
+    })
+    
+    socket.on('reloadCashbox', (data) => {    
+        console.log(`This cashbox reload`);
+    })
+
+    socket.on('pingCashbox', (data) => {    
+        console.log('here');
+        socket.emit('pingCashbox', null);
+    })
+
+
+    function initCashBox(){
+        let _user;
+        let cashBoxID;
+        
+        cashBoxID = prompt('Админ id');
+        
+        if(cashBoxID){
+            users.some(user => {
+                if(user.id == cashBoxID && user.role == 'cashbox'){
+                    _user = user;
+                }
+                return user.id == cashBoxID && user.role == 'cashbox';
+            });
+        }
+
+        return _user;
+    }
+            
+
+</script>
+</body>
+
+</html>
+            
+
