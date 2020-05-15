@@ -18,7 +18,7 @@
     
     if(user){
         console.log(user);
-        socket = io.connect('http://localhost:3001/cashbox',{
+        socket = io.connect('http://localhost:3000/cashbox',{
             query:{data: JSON.stringify(user)}
         });
     }
@@ -32,7 +32,7 @@
     })
     
     socket.on('reloadCashbox', (data) => {    
-        console.log(`This cashbox reload`);
+        console.log(`This cashbox has been reload`);
     })
 
     socket.on('pingCashbox', (data) => {    

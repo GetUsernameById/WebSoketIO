@@ -32,7 +32,8 @@
     
     if(user){
         console.log(user);
-        socket = io.connect('http://localhost:3001/admin',{
+        socket = io.connect('http://localhost:3000/admin',{
+            reconnectionDelay: 1500,
             query:{data: JSON.stringify(user)}
         });
     }
@@ -47,15 +48,15 @@
     })
 
     socket.on('getActiveCashbox', (data) => {
-        console.log(data);
+        console.log('data ', data);
         data.forEach(element => {
             $('.cashbox-items').append(`
-                <div class="cashbox" data->
+                <div class='cashbox' data-socket='${element.socketID}'>
                     <div class="content">
                         Касса ${element.id}/${element.storeID}/${element.organisationID}
                     </div>
-                    <div class="emits">
-                        <button class='cb-btn product-btn'onclick="addNewProduct()"> New Product </button>
+                    <div class='emits'>
+                        <button class='cb-btn product-btn' onclick='addNewProduct()''> New Product </button>
                         <button class='cb-btn reload-btn'> Reload </button>
                     </div>
                 </div>
@@ -64,6 +65,8 @@
     })
   
     socket.on('connectedNewCb', (data) => {
+      
+        
         $('.cashbox-items').append(`
             <div class='cashbox' data-socket='${data.socketID}'>
                 <div class="content">
